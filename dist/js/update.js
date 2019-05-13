@@ -1,1 +1,0 @@
-var main_object={print:function(n){console.log(n)}};main_object.print("window updated!");

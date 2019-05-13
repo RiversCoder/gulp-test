@@ -1,6 +1,9 @@
 var main_object = {
     print : function(str){
         console.log(str);
+    },
+    alert: function(str){
+    	alert(str)
     }
 };
 

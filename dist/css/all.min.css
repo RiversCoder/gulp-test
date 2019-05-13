@@ -1,3 +1,3 @@
-
-.section-box-1{width:300px;height:500px;border:1px solid red;background-color:#ff0}
+body,html{width:100%;height:100%;background-color:red}
+.section-box-1{width:300px;height:500px;border:1px solid purple;background-color:#ff0}
 .section-box-2{width:300px;height:200px;border:1px solid #000;background-color:pink}
