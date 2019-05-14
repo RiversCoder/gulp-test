@@ -8,6 +8,11 @@
     "gulp": "^4.0.2",
     "gulp-babel": "^7.0.1",
     "gulp-concat": "^2.6.1",
+    "gulp-livereload": "^4.0.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-markdown": "^4.0.0",
+    "gulp-markdown-pdf": "^7.0.0",
+    "gulp-plumber": "^1.2.1",
     "gulp-ruby-sass": "^4.0.0",
     "gulp-uglify": "^3.0.2"
   },

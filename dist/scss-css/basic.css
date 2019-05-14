@@ -1,0 +1,15 @@
+nav {
+  width: 100px;
+  color: #F90; }
+
+#content article h1 {
+  color: #333; }
+#content article p {
+  margin-bottom: 1.4em; }
+#content aside {
+  background-color: #EEE; }
+
+body {
+  background-color: #F90;
+  color: red;
+  font-size: 23px; }

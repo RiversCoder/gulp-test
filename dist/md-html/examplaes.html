@@ -1,0 +1,142 @@
+<h2 id="基础案例实战">基础案例实战</h2>
+<h3 id="1-打包压缩合并js文件成一个文件-压缩js">1. 打包压缩合并js文件成一个文件 压缩JS</h3>
+<pre><code class="language-js">// 打包压缩合并js文件成一个文件 压缩JS
+
+let gulp = require(&quot;gulp&quot;);
+let uglify = require(&quot;gulp-uglify&quot;);
+let concat = require(&quot;gulp-concat&quot;);
+
+
+gulp.task(&quot;default&quot;, function(){
+    // 将你默认的任务代码放在这里
+    console.log(&quot;Ok&quot;);
+
+    return gulp.src(&quot;./js/*.js&quot;)
+        .pipe(uglify()) //压缩 获取到的js 不写不压缩
+        .pipe(concat(&quot;all.min.js&quot;)) //将该目录下所有的js文件合并到一个名为all.min.js的文件
+        .pipe(gulp.dest(&quot;./dist/js/&quot;)); //将all.min.js文件输出到dist/js/目录下
+});</code></pre>
+<h3 id="2-打包合并css文件"><strong>2. 打包合并css文件</strong></h3>
+<pre><code class="language-js">let gulp = require(&quot;gulp&quot;);
+let uglify = require(&quot;gulp-uglify&quot;);  // 压缩 js
+let concat = require(&quot;gulp-concat&quot;); // 合并文件
+let uglify_css = require(&quot;gulp-minify-css&quot;) //压缩css
+
+gulp.task(&quot;default&quot;, function(){
+    // 将你默认的任务代码放在这里
+    console.log(&quot;Ok&quot;);
+
+    return gulp.src(&quot;./css/*.css&quot;)
+        .pipe(uglify_css()) //压缩 获取到的css 不写不压缩
+        .pipe(concat(&quot;all.min.css&quot;)) //将该目录下所有的css文件合并到一个名为all.min.css的文件
+        .pipe(gulp.dest(&quot;./dist/css/&quot;)); //将all.min.css文件输出到dist/js/目录下
+});
+</code></pre>
+<h3 id="3-在打包合并js文件之后-才打包合并css文件"><strong>3. 在打包合并js文件之后 才打包合并css文件</strong></h3>
+<pre><code>let gulp = require(&quot;gulp&quot;);
+let uglify = require(&quot;gulp-uglify&quot;);  // 压缩 js
+let concat = require(&quot;gulp-concat&quot;); // 合并文件
+let uglify_css = require(&quot;gulp-minify-css&quot;) //压缩css
+
+
+gulp.task(&quot;scripts&quot;, function(){
+    return gulp.src(&quot;./js/*.js&quot;)
+        .pipe(uglify()) //压缩 获取到的js 不写不压缩
+        .pipe(concat(&quot;all.min.js&quot;)) //将该目录下所有的js文件合并到一个名为all.min.js的文件
+        .pipe(gulp.dest(&quot;./dist/js/&quot;)); //将all.min.js文件输出到dist/js/目录下
+});
+
+gulp.task(&quot;css&quot;, function(){
+    return gulp.src(&quot;./css/*.css&quot;)
+        .pipe(uglify_css()) //压缩 获取到的css 不写不压缩
+        .pipe(concat(&quot;all.min.css&quot;)) //将该目录下所有的css文件合并到一个名为all.min.css的文件
+        .pipe(gulp.dest(&quot;./dist/css/&quot;)); //将all.min.css文件输出到dist/js/目录下
+});
+
+gulp.task(&quot;my-tasks&quot;, gulp.series(&quot;scripts&quot;, &quot;css&quot;, function(){
+    console.log(&quot;js、css打包完毕!&quot;)
+}))
+</code></pre><h3 id="4--监听文件改变-根据改变的内容-做出对应的处理"><strong>4.  监听文件改变 根据改变的内容 做出对应的处理</strong></h3>
+<pre><code class="language-js">let gulp = require(&quot;gulp&quot;);
+let uglify = require(&quot;gulp-uglify&quot;);  // 压缩 js
+let concat = require(&quot;gulp-concat&quot;); // 合并文件
+let uglify_css = require(&quot;gulp-minify-css&quot;) //压缩css
+
+gulp.task(&quot;watch_js&quot;,function(done){
+    let watcher = gulp.watch([&quot;./js/*.js&quot;])
+
+    //文件被修改
+    /*
+        &#39;add&#39;, &#39;addDir&#39;, &#39;change&#39;, &#39;unlink&#39;, &#39;unlinkDir&#39;, &#39;ready&#39;, &#39;error&#39;, &#39;all&#39;
+     */
+    watcher.on(&quot;add&quot;, (path, stats) =&gt; {
+        console.log(`File ${path} was added`); // File js\add.js was added
+    })
+
+    watcher.on(&quot;change&quot;, (path, stats) =&gt; {
+        console.log(`File ${path} was changed`);
+        console.log(stats)
+  //fs 
+    })
+    // watcher.close()
+    done()
+})  
+
+
+
+/*gulp.task(&quot;watch_js&quot;,function(){
+    return gulp.watch([&quot;./js/*.js&quot;,&quot;./css/*.css&quot;,&quot;!./css/style.css&quot;], gulp.series(&quot;scripts&quot;, &quot;css&quot;), function(cb){
+        console.log(&quot;js、css修改文件被修改，已经自动打包压缩完成!&quot;)
+        cb()
+    })
+})  */</code></pre>
+<h3 id="5-使用新版gulp4-写法"><strong>5. 使用新版gulp4 写法</strong></h3>
+<pre><code class="language-js">const { task } = require(&#39;gulp&#39;);
+
+const clean = function(cb) {
+  // body omitted
+  console.log(&quot;clean&quot;)
+  cb();
+};
+clean.displayName = &#39;clean:all&#39;;
+
+task(clean);
+
+function build(cb) {
+  // body omitted
+  console.log(&quot;build&quot;)
+  cb();
+}
+build.description = &#39;Build the project&#39;;
+build.flags = { &#39;-e&#39;: &#39;An example flag&#39; };
+
+task(build);
+
+/*
+
+    D:\me\gulp\gulp-test&gt;gulp --tasks
+    [16:35:32] Tasks for D:\me\gulp\gulp-test\gulpfile.js
+    [16:35:32] ├── clean:all
+    [16:35:32] └── build      Build the project
+    [16:35:32]     -e         …An example flag
+
+ */</code></pre>
+<h3 id="6-编译-sass"><strong>6. 编译 sass</strong></h3>
+<ol>
+<li>首先安装<a href="https://rubyinstaller.org/">ruby</a></li>
+<li>然后安装sass: <code>gem install sass</code></li>
+<li>最后安装<code>gulp-sass</code>: <code>cnpm install --save-dev gulp-sass</code></li>
+</ol>
+<pre><code class="language-js">let gulp = require(&quot;gulp&quot;);
+let babel = require(&quot;gulp-babel&quot;)
+let uglify = require(&quot;gulp-uglify&quot;);  // 压缩 js
+let concat = require(&quot;gulp-concat&quot;); // 合并文件
+let uglify_css = require(&quot;gulp-minify-css&quot;) //压缩css
+let sass = require(&quot;gulp-ruby-sass&quot;)
+
+gulp.task(&quot;task-sass&quot;, (done) =&gt; {
+    sass(&quot;./scss/*.scss&quot;, {style: &quot;compressed&quot;})
+        .pipe(concat(&quot;scss.min.css&quot;))
+        .pipe(gulp.dest(&quot;./dist/scss-css/&quot;))
+    done()
+})</code></pre>
