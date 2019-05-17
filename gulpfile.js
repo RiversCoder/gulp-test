@@ -17,21 +17,23 @@ const prefix_css = (done) => {
     done()
 }
 
-
-//js生成文件hash编码并生成 rev-manifest.json文件名对照映射
-gulp.task('revJs', function(){
-    return gulp.src("./js/*.js")
+const prefix_js = (done) => {
+    gulp.src("./js/*.js")
         .pipe($.rev())
         .pipe(gulp.dest('./dist/js/'))
         .pipe($.rev.manifest())
         .pipe(gulp.dest('rev/js'));
-})
+    done()
+}
 
-gulp.task('assetRev', function(){
-    return gulp.src("./*.html")   //该任务针对的文件
-      .pipe($.assetRev())  //该任务调用的模块
+const prefix_image = (done) => {
+    gulp.src("./images/*.jpg")   //该任务针对的文件
+      .pipe($.rev())  //该任务调用的模块
       .pipe(gulp.dest('dist/images/')) //编译后的路径
-});
+      .pipe($.rev.manifest())
+      .pipe(gulp.dest('rev/images'));
+    done()
+}
 
 const prefix_html = (done) => {
     gulp.src(["rev/**/*.json","./*.html"])
@@ -40,7 +42,7 @@ const prefix_html = (done) => {
     done()
 }
 
-exports.default = gulp.series(prefix_css,  "revJs", "assetRev", prefix_html)
+exports.default = gulp.series(prefix_css,  prefix_js, prefix_image, prefix_html)
 
 
 
