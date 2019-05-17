@@ -32,9 +32,11 @@ bower_components
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directories
+# Dependency directories gulp-mobile
 node_modules/
 jspm_packages/
+examples/gulp-posts/node_modules/
+examples/gulp-mobile/node_modules/
 
 # Typescript v1 declaration files
 typings/

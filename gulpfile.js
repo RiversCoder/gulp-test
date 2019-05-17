@@ -1,9 +1,7 @@
 
 /*
 		 常用插件地址：
-
 		 	http://pinkyjie.com/2015/08/02/commonly-used-gulp-plugins-part-1/
-
  */
 
 let gulp = require("gulp");
