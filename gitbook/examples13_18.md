@@ -161,3 +161,81 @@ const tasking = (done) => {
 
 exports.default = tasking
 ```
+### **18. gulp-print、gulp-bump与gulp-header npm第三方库插件解读 **
+```js
+let gulp = require("gulp");
+let gulpLoadPlugins = require('gulp-load-plugins');
+let $ = gulpLoadPlugins({lazyload: true, rename:{"gulp-ruby-sass" : "sass", "gulp-markdown-pdf": "mdpdf", "gulp-rev-collector":"revCollector", "gulp-asset-rev":"assetRev"}});
+
+
+const print = (done) => {
+  gulp.src(["./images/*"])
+    .pipe($.print.default(func))
+  done()
+}
+
+function func(data){
+  console.log("当前的文件是："+data)
+}
+
+/*
+
+  C:\web\gulp>gulp
+  [22:10:20] Using gulpfile C:\web\gulp\gulpfile.js
+  [22:10:20] Starting 'default'...
+  [22:10:20] Finished 'default' after 41 ms
+  当前的文件是：images\01.jpg
+  当前的文件是：images\02.jpg
+
+ */
+
+const bumps = (done) => {
+  gulp.src(["./package.json"])
+    .pipe($.bump({version: '1.2.3'}))
+    .pipe(gulp.dest("./dist"))
+  done()
+}
+
+var pkg = require('./package.json');
+var template = ['/**',
+    ' * <%= pkg.name %> - <%= pkg.description %>',
+    ' * @authors <%= pkg.authors %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @link <%= pkg.homepage %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''
+].join('\n');
+
+const headers = (done)=>{
+  gulp.src("./css/*")
+    .pipe($.header(template, { pkg: pkg }))
+    .pipe(gulp.dest("./dist/css/"))
+  done()
+}
+
+
+/*
+     实现效果如下：在style1.css文件中新增了如下
+
+     /**
+     *  - haha this's my package.json file
+     * @authors lgc
+     * @version v1.0.0
+     * @link 
+     * @license MIS
+     */
+    /*.section-box-1{
+      width: 300px;
+      height: 500px;
+      border: 1px solid purple;
+      background-color: yellow;
+    }
+    
+ */
+
+exports.default = headers
+
+
+
+```
