@@ -1,3 +1,4 @@
+/* 1232321 */
 window.onload = function(){
     console.log('window loaded!');
 };

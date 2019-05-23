@@ -1,0 +1,13 @@
+/**
+ *  - haha this's my package.json file
+ * @authors lgc
+ * @version v1.0.0
+ * @link 
+ * @license MIS
+ */
+.section-box-1{
+	width: 300px;
+	height: 500px;
+	border: 1px solid purple;
+	background-color: yellow;
+}

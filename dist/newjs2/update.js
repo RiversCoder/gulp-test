@@ -1,3 +1,4 @@
+/* 1232321 */
 var main_object = {
     print : function(str){
         console.log(str);

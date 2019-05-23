@@ -10,77 +10,73 @@
 let gulp = require("gulp");
 let gulpLoadPlugins = require('gulp-load-plugins');
 let $ = gulpLoadPlugins({lazyload: true, rename:{"gulp-ruby-sass" : "sass", "gulp-markdown-pdf": "mdpdf", "gulp-rev-collector":"revCollector", "gulp-asset-rev":"assetRev"}});
-let del = require("del")
+let merge = require('merge-stream');
+let del = require('del')
 
+// 1. merge-stream 
+/*
+  一个gulp的task只能返回一个stream，但有的时候有这么一种情景：有两类文件，它们的原始位置和处理后的位置都是不同的，但它们的处理流程相同。由于gulp.src和gulp.dest的参数不同，我们就需要写两个task来分别完成这个任务，一方面略显重复，另一方面逻辑上来讲这两个task本来就是处理同样的事情的。这种情况就需要merge-stream登场了，它的作用就是将多个stream合成一个返回。比如下面这个例子
+ 
+ // 批量给js文件和css添加注释
 
-// gulp-filter 根据规则（minimatch），筛选出需要的文件流单独最后处理，筛选时坑有点多，建议使用gulp-print以及gulp-util工具开发，以及需要注意工作流的先后同步问题
-// gulp-filter文档：https://www.npmjs.com/package/gulp-filter
-// 规则文档：https://github.com/isaacs/minimatch#options
-
+ */
 
 const clear = (done) => {
-  del.sync(['./dist/newjs/**',"!./dist/newjs"])
+  del.sync(['./dist/newjs/*','!./dist/newjs','./dist/newcss/*','./dist/newcss'])
   done()
+}
+
+const merges = (done) => {
+  var stream1 = addHeaderText("./js/*.js", "./dist/newjs/");  // 千万不要写成 ./dist/newjs/* 这种
+  var stream2 = addHeaderText("./css/*.css", "./dist/newcss/"); // 
+  return merge(stream1, stream2);
+}
+
+var pkg = require('./package.json');
+var template = ['/**',
+      ' * <%= pkg.name %> - <%= pkg.description %>',
+      ' * @authors <%= pkg.authors %>',
+      ' * @version v<%= pkg.version %>',
+      ' * @link <%= pkg.homepage %>',
+      ' * @license <%= pkg.license %>',
+      ' */',
+      ''
+  ].join('\n');
+
+// 添加注释
+function addHeaderText(src, dest){
+    return gulp.src(src).pipe($.header(template, { pkg: pkg })). pipe(gulp.dest(dest))
 }
 
 /*
-gulp.task("clear", () => {
-  return gulp.src("./dist/newjs/*")
-      .pipe($.clean())
-})*/
+    打印：
 
-/*const clear = (done) => {
-  return gulp.src("./dist/newjs/*")
-      .pipe($.clean())
-}*/
+    D:\me\gulp\gulp-test (master -> origin) (<no name>@1.0.0)
+    λ gulp
+    [19:59:23] Using gulpfile D:\me\gulp\gulp-test\gulpfile.js
+    [19:59:23] Starting 'default'...
+    [19:59:23] Starting 'clear'...
+    [19:59:23] Finished 'clear' after 50 ms
+    [19:59:23] Starting 'merges'...
+    [19:59:23] Finished 'merges' after 193 ms
+    [19:59:23] Finished 'default' after 251 ms
 
-const filters = (done) => {
+ */
 
-  let filter = $.filter(["./js/*.js"],{restore: true})
-  // console.log(filter)
-  gulp.src(["./**/*.js","!**/node_modules/**","!./dist/**","!**/gulpfile.js","!./class/*"])
-    .pipe($.print.default(func))
-    .pipe(filter)
-    .pipe($.concat("all.min.js"))
-    // .pipe($.uglify())
-    .pipe(filter.restore)
-    .pipe($.print.default(func))
-    .on('error', function(err) {
-        $.util.log($.util.colors.red('[Error]'), err.toString());
-    })
-    .pipe(gulp.dest("./dist/newjs/"))
+var runSequence = require('run-sequence');
+
+gulp.task("task1", function(done){
+  console.log("task1")
   done()
-}
+})
 
-function func(data){
-  console.log("当前的文件路径："+data)
-}
-
-
-// 2. gulp-flatten 的使用，常用于把各个子目录下面的所有满足匹配规则的文件（比如所有js文件）取出来放在同级文件夹下面
-// 文档地址：https://www.npmjs.com/package/gulp-flatten
-
-const flattens = (done) => {
-    gulp.src(["**/**/*.js","!**/node_modules/**","!./dist/newjs/**"])
-		.pipe($.print.default(func))
-		.pipe($.flatten())
-		.pipe(gulp.dest("./dist/newjs/"))
-	done()
-}
+gulp.task("my-taskss", function(done){
+    runSequence( ["task1"])
+    done()
+})
 
 
-//3. gulp-if 的使用 ，类似于三元运算符， 如果为true则执行当前管道的操作 （可以执行多个操作），如果false则不再执行当前管道
-// 备注：只会影响当前管道，不影响后续的管道，意思是什么都不干
-// 文档地址：https://www.npmjs.com/package/gulp-if
 
-const guif = (done) => {
-    gulp.src(["**/**/*.js","!**/node_modules/**","!./dist/newjs/**"])
-    .pipe($.print.default(func))
-    .pipe($.if(false, $.flatten()))
-    .pipe(gulp.dest("./dist/newjs/"))
-  done()
-}
-
-exports.default = gulp.series(clear, guif)
+// exports.default = runSequence
 
 
