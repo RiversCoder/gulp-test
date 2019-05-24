@@ -12,6 +12,7 @@ let gulpLoadPlugins = require('gulp-load-plugins');
 let $ = gulpLoadPlugins({lazyload: true, rename:{"gulp-ruby-sass" : "sass", "gulp-markdown-pdf": "mdpdf", "gulp-rev-collector":"revCollector", "gulp-asset-rev":"assetRev"}});
 let merge = require('merge-stream');
 let del = require('del')
+var runSequence = require('run-sequence');
 
 // 1. merge-stream 
 /*
@@ -63,20 +64,87 @@ function addHeaderText(src, dest){
 
  */
 
-var runSequence = require('run-sequence');
 
-gulp.task("task1", function(done){
-  console.log("task1")
-  done()
-})
+//2. wiredep 
+/*
+    概述：wiredep就是wire dependence的意思，它的作用就是把bower.json中声明的dependence自动的包含到HTML中去。要插入文件，wiredep需要解决两个问题：
 
-gulp.task("my-taskss", function(done){
-    runSequence( ["task1"])
-    done()
-})
+      插入什么文件：要插入的文件列表自然来自bower.json，每个bower安装的依赖库，根目录下边都有一个自己的bower.json文件，其中的main字段指明了使用这个库需要包含的文件，wiredep最终包含的文件列表就来自这个字段。有些情况下，库自身的bower.json的main字段可能会多包含文件或少包含文件，如果想要定制这个列表，则可以在自己的bower.json中使用overrides字段，如下面的代码覆盖了mdi这个库的main字段。
 
+      wiredep插件支持很多参数，常用的主要有两个：bowerJson，directory
 
+ */
 
-// exports.default = runSequence
+const wiredep = require("wiredep").stream
+const wiredeps = (done) => {
+  return gulp.src(["./wiredep/index.html"]).pipe(wiredep({
+    bowerJson: require("./bower.json"),
+    directory: './bower_components/'
+  })).pipe(gulp.dest("./dist/wiredep/"))
+}
 
+/*
+    其他参数：
+    optional: 'configuration',
+    goes: 'here'
+    
+ */
 
+/*
+    打印效果如下：
+
+    D:\me\gulp\gulp-test (master -> origin) (<no name>@1.0.0)
+    λ gulp
+    [14:42:17] Using gulpfile D:\me\gulp\gulp-test\gulpfile.js
+    [14:42:17] Starting 'default'...
+    [14:42:17] Finished 'default' after 263 ms
+  
+    实现效果如下;
+
+    <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>first project of angularJS and spring-boot</title>
+          <!-- bower:css -->
+          <link rel="stylesheet" href="../bower_components/angular-material/angular-material.css" />
+          <link rel="stylesheet" href="../bower_components/codemirror/lib/codemirror.css" />
+          <link rel="stylesheet" href="../bower_components/angular-loading-bar/build/loading-bar.css" />
+          <link rel="stylesheet" href="../bower_components/angular-material-data-table/dist/md-data-table.css" />
+          <link rel="stylesheet" href="../bower_components/angular-chart.js/dist/angular-chart.css" />
+          <!-- endbower -->  
+        </head>
+        <body ng-app>
+
+          <!-- bower:js -->
+          <script src="../bower_components/angular/angular.js"></script>
+          <script src="../bower_components/angular-resource/angular-resource.js"></script>
+          <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
+          <script src="../bower_components/angular-messages/angular-messages.js"></script>
+          <script src="../bower_components/angular-animate/angular-animate.js"></script>
+          <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+          <script src="../bower_components/angular-aria/angular-aria.js"></script>
+          <script src="../bower_components/angular-route/angular-route.js"></script>
+          <script src="../bower_components/angular-material/angular-material.js"></script>
+          <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+          <script src="../bower_components/angular-ui-validate/dist/validate.js"></script>
+          <script src="../bower_components/codemirror/lib/codemirror.js"></script>
+          <script src="../bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
+          <script src="../bower_components/angular-loading-bar/build/loading-bar.js"></script>
+          <script src="../bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+          <script src="../bower_components/angular-material-data-table/dist/md-data-table.js"></script>
+          <script src="../bower_components/angular-once/once.js"></script>
+          <script src="../bower_components/moment/moment.js"></script>
+          <script src="../bower_components/angular-moment/angular-moment.js"></script>
+          <script src="../bower_components/Chart.js/Chart.js"></script>
+          <script src="../bower_components/angular-chart.js/dist/angular-chart.js"></script>
+          <script src="../bower_components/angular-filter/dist/angular-filter.min.js"></script>
+          <script src="../bower_components/ng-file-upload/ng-file-upload.js"></script>
+          <script src="../bower_components/jquery/dist/jquery.js"></script>
+          <!-- endbower --> 
+        </body>
+      </html>
+
+ */
+
+exports.default = gulp.series(clear, merges)
