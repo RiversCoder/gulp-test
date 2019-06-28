@@ -9,22 +9,9 @@
 
 let gulp = require("gulp");
 let gulpLoadPlugins = require('gulp-load-plugins');
-let $ = gulpLoadPlugins({lazyload: true, rename:{"gulp-ruby-sass" : "sass", "gulp-markdown-pdf": "mdpdf", "gulp-rev-collector":"revCollector", "gulp-asset-rev":"assetRev"}});
+let $ = gulpLoadPlugins({lazyload: true, rename:{}});
 
 
-const filters = (done) => {
-
-  let filter = $.filter(["./js/*.js"],{restore: true})
-  gulp.src(["./**/*.js","!./node_modules/**"])
-    .pipe(filter)
-    .pipe($.uglify())
-    .on('error', function(err) {
-        $.util.log($.util.colors.red('[Error]'), err.toString());
-    })
-    .pipe(filter.restore)
-    .pipe(gulp.dest("./dist/newjs/"))
-  done()
-}
 
 exports.default = filters
 
