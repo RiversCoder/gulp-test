@@ -1,0 +1,11 @@
+version:10.15.3 
+wget url: sudo wget https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.xz
+解压命令:
+xz -d node-v10.15.3-linux-x64.tar.xz
+tar -xf node-v10.15.3-linux-x64.tar
+设置全局:
+sudo ln -s /home/root1/server/node_02/node-v10.15.3-linux-x64/bin/node /usr/local/bin/node
+sudo ln -s /home/root1/server/node_02/node-v10.15.3-linux-x64/bin/npm /usr/local/bin/npm
+打印版本：
+node -v
+npm -v

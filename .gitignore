@@ -38,6 +38,7 @@ jspm_packages/
 
 examples/gulp-postcss/node_modules/
 examples/gulp-mobile/node_modules/
+brower_components/
 
 # Typescript v1 declaration files
 typings/

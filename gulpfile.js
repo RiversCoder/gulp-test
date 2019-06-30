@@ -9,10 +9,23 @@
 
 let gulp = require("gulp");
 let gulpLoadPlugins = require('gulp-load-plugins');
-let $ = gulpLoadPlugins({lazyload: true, rename:{}});
+let $ = gulpLoadPlugins({lazyload: true, rename:{"gulp-ruby-sass" : "sass", "gulp-markdown-pdf": "mdpdf", "gulp-rev-collector":"revCollector", "gulp-asset-rev":"assetRev"}});
+let merge = require('merge-stream');
+let del = require('del')
+let suffix = require('./modules/gulp-damiao-asset-suffix/index.js')
 
+var htmlreplace = require("gulp-html-replace")
 
+const clear = (done) => {
+  del.sync(['./dist/html/*','!./dist/newjs','./dist/newcss/*','./dist/newcss'])
+  done()
+}
 
-exports.default = filters
+const suffixs = (done) =>{
+  gulp.src(['./html/home.html'])
+    .pipe(suffix())
+    .pipe(gulp.dest('./dist/html/'))
+  done()
+}
 
-
+exports.default = gulp.series(clear, suffixs)
